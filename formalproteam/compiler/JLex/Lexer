@@ -1,0 +1,49 @@
+import java.io.*;
+enum TokenType{NUM,VAR,ADD,MIN,POWER};
+class Token{
+	String text;
+	int begin;
+	int end;
+	TokenType type;
+	public Token(TokenType type,String text,int begin,int end){
+		this.type=type;
+		this.begin=begin;
+		this.end=end;
+		this.text=text;
+	}
+	public String toString(){
+		return String.format("[%s,%s,%d,%d]",type,text,begin,end);
+	}
+}
+%%
+%class Lexer
+%public
+%function getTokenType
+%type Token
+%{
+	public static void main(String []args) throws Exception{
+		
+		
+		String msg="3x+6x";
+		StringReader reader = new StringReader (msg);
+		Lexer le=new Lexer(reader );
+		Token tok;
+		while((tok=le.getTokenType()) !=null)
+			        System.out.println(tok.type +" "+tok.val);	
+		r.c
+	}
+%}
+%line
+%char
+ALPHA=[x]
+DIGIT=[0-9]
+WS=[\r\t\n\f\ ]
+NON_ZERO_DIGIT=[1-9]
+%%
+<YYINITIAL> "x" {return new Token(TokenType.VAR,yytext(),yychar,yychar+yytext().length());}
+<YYINITIAL> 0|{NON_ZERO_DIGIT}{DIGIT}* {return new Token(TokenType.NUM,yytext(),yychar,yychar+yytext().length());}
+<YYINITIAL> "+" {return new Token(TokenType.ADD,yytext(),yychar,yychar+yytext().length());}
+<YYINITIAL> "-" {return new Token(TokenType.MIN,yytext(),yychar,yychar+yytext().length());}
+<YYINITIAL> "^" {return new Token(TokenType.POWER,yytext(),yychar,yychar+yytext().length());}
+<YYINITIAL> {WS}* {}
+<YYINITIAL> . {System.out.println("error");}
